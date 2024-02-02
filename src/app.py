@@ -5,8 +5,8 @@ import openai
 import streamlit as st
 from annoy import AnnoyIndex
 from streamlit_chat import message
-import azure_keys
-import src.azure_client as azure_client
+import azure_client as azure_client
+
 
 def _submit():
     st.session_state['question'] = st.session_state.input_field
@@ -21,15 +21,23 @@ def app():
     st.title("Kapacity LLM Hackathon")
     f = 1536
     EMBEDDING_DTYPE = np.float32
-    st.write("This is group Area 51 submission for the LLM Hackathon.")
-    u = AnnoyIndex(f, 'angular')
-    u.load('queen_speeches.ann')
+
+    annoy_level_line = AnnoyIndex(f, 'angular')
+    annoy_level_line.load('queen_speeches.ann')
+    annoy_level_summary = AnnoyIndex(f, 'angular')
+    annoy_level_summary.load('queen_speeches_summaries.ann')
+    annoy_level_file = AnnoyIndex(f, 'angular')
+    annoy_level_file.load('queen_speeches_files.ann')
+
     #a = AnnoyIndex(f, 'angular')
     #a.load('queen_speeches_summaries.ann')
     with open('processed_speeches.json') as fp:
-        text_dict = json.load(fp)
-    #with open('processed_speeches_summaries.json') as fp:
-    #    text_summaries_dict = json.load(fp)
+        text_dict_line = json.load(fp)
+    with open('processed_speeches_summaries.json') as fp:
+        text_dict_summary = json.load(fp)
+    with open('processed_speeches_files.json') as fp:
+        text_dict_file = json.load(fp)
+
     if 'question' not in st.session_state:
         st.session_state['question'] = ''
 
@@ -54,10 +62,14 @@ def app():
             client = azure_client.initialize_client()
             embedding_raw = client.embeddings.create(input=st.session_state['question'], model="text-embedding-ada-002")
             embedding = np.array(embedding_raw.data[0].embedding, dtype=EMBEDDING_DTYPE)
-            vectors = u.get_nns_by_vector(embedding, 5, search_k=-1, include_distances=True)
-            #vectors_summaries = a.get_nns_by_vector(embedding, 10, search_k=-1, include_distances=True)
-            print(vectors)
-            texts = [text_dict[str(i)] for i in vectors[0]]
+            vectors_line = annoy_level_line.get_nns_by_vector(embedding, 5, search_k=-1, include_distances=True)
+            vectors_summaries = annoy_level_summary.get_nns_by_vector(embedding, 5, search_k=-1, include_distances=True)
+            vectors_file = annoy_level_summary.get_nns_by_vector(embedding, 1, search_k=-1, include_distances=True)
+
+            texts_line = [text_dict_line[str(i)] for i in vectors_line[0]]
+            texts_summary = [text_dict_summary[str(i)] for i in vectors_summaries[0]]
+            texts_file = [text_dict_line[str(i)] for i in vectors_file[0]]
+
             #summaries = [text_summaries_dict[str(i)] for i in vectors_summaries[0]]
                      #You are answering questions to the best of your ability.
             selected_conversation_hist = [
@@ -77,11 +89,15 @@ def app():
                      If you asked about context of something the refer back to what events are related to said something.
                      """},
             ]
-            print(texts)
+            #print(texts)
             modified_question = "Brugeren spurgte: \n" + \
                                 st.session_state['question'] + \
-                                '\n Du har nu følgende fra dronningens nytårstaler fra 2001-2022 at svare ud fra: \n' + \
-                                '\n '.join(texts) + \
+                                '\n Du har nu følgende fra dronningens nytårstaler fra 2001-2023 at svare ud fra: \n' + \
+                                '\n '.join(texts_line) + \
+                                '\n Og disse følgende tekster fra opsummeringer: \n' + \
+                                '\n '.join(texts_summary) + \
+                                '\n Og denne tale: \n' + \
+                                '\n '.join(texts_file) + \
                                 '\n Besvar spørgsmålet.'
             # modified_question = "Brugeren spurgte: \n" + \
             #                     st.session_state['question'] + \

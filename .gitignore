@@ -27,3 +27,4 @@ azure_keys.py
 .environment
 src/__pycache__/__init__.cpython-310.pyc
 src/__pycache__/azure_client.cpython-310.pyc
+.venv
