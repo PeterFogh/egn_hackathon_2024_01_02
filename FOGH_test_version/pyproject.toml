@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "egn_openai_hackathon"
+version = "0.0.1"
+description = "Application for hackathon"
+authors = ["Thomas", "Jonathan"]
+readme = "README.md"
+license = "MIT" 
+packages = [{include="src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openai = "^1.6.1"
+python-dotenv = "^1.0.0"
+langchain = "^0.0.354"
+llama-index = "^0.9.25.post1"
+streamlit-chat = "0.0.2.2"
+gradio = "^4.12.0"
+
+[tool.poetry.group.dev.dependencies]
+poetry = "^1.7.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
