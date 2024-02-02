@@ -1,0 +1,57 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "EGN Hackathon 2024 1. feb",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+		"dockerfile": "../Dockerfile"
+	},
+	// We avoid adding .env to DevContainer and instead source .env in launch.json to enable
+	//     dynamic add/remove system variables during development in DevContainer.
+	// "runArgs": ["--env-file", "./.env"],
+	
+	// Extensions and what they are used for:
+	// "ms-azure-devops.azure-pipelines" is used for Azure Pipeline YAML formatting
+	// "esbenp.prettier-vscode" is used for YAML, JSON and other filetype formatting
+	// "ms-vscode.live-server" is used for previewing the Locust HTML report
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-vscode.vscode-node-azure-pack",
+				"ms-azure-devops.azure-pipelines",
+				"esbenp.prettier-vscode",
+				"ms-vscode.live-server"
+			]
+		}
+	},
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		8000,
+		8089,
+		8400
+	],
+	"portsAttributes": {
+		"8000": {"label": "Fast API server"},
+		"8089": {"label": "Locust web UI"},
+		"8400": {"label": "Microsoft Auth"}
+	},
+
+	// Run commands after the container is created.
+	//"postCreateCommand": "pip install -r requirements_ci.txt"
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}
