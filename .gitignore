@@ -23,3 +23,7 @@ FOGH_test_version/queens_speeches/speeches/2020.txt
 FOGH_test_version/queens_speeches/speeches/2021.txt
 FOGH_test_version/queens_speeches/speeches/2022.txt
 FOGH_test_version/queens_speeches/speeches/2023.txt
+azure_keys.py
+.environment
+src/__pycache__/__init__.cpython-310.pyc
+src/__pycache__/azure_client.cpython-310.pyc
