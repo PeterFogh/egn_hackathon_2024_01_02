@@ -17,7 +17,7 @@ text_dict_lines = {}
 text_dict_summary = {}
 text_dict_files = {}
 
-for file in range(2001, 2024):
+for file in list(range(2001, 2024)):
 #for i in [2001]:
     with open(f'../queens_speeches/speeches/{file}.txt', encoding='utf-8') as f:
         total_text = f"År {file}"
@@ -35,10 +35,13 @@ for file in range(2001, 2024):
     selected_conversation_hist = [
         {"role": "system",
          "content": f"""
-            Your job is to summarize the Danish Queens new years speeches.
-            Please include information such as but not limited to
-            themes, people, countries, facts, events and minorities.
-            Please do so in Danish.
+            Dit job er at lave et referat af den danske dronnings nytårstaler.
+
+            Venligst inkluder information om temaer, mennesker, titler, familie relationer,
+
+            lande, begivenheder og minoriter samt andet unik information.
+
+            venligst gør det på dansk.
              """},
     ]
     modified_question = "Opsummer følgende tale: \n" + \
@@ -63,11 +66,12 @@ for file in range(2001, 2024):
         text_dict_summary[id_summaries] = summary_text
         id_summaries += 1
 
+
     client = azure_client.initialize_client()
-    embedding_raw = client.embeddings.create(input=total_text, model="text-embedding-ada-002")
+    embedding_raw = client.embeddings.create(input=answer, model="text-embedding-ada-002")
     embedding = np.array(embedding_raw.data[0].embedding, dtype=EMBEDDING_DTYPE)
     list_of_files.add_item(id_files, embedding)
-    text_dict_files[id_files] = total_text
+    text_dict_files[id_files] = answer
     id_files += 1
     print(f'Processed file: {file}')
 

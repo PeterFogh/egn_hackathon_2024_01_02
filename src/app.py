@@ -63,8 +63,8 @@ def app():
             embedding_raw = client.embeddings.create(input=st.session_state['question'], model="text-embedding-ada-002")
             embedding = np.array(embedding_raw.data[0].embedding, dtype=EMBEDDING_DTYPE)
             vectors_line = annoy_level_line.get_nns_by_vector(embedding, 5, search_k=-1, include_distances=True)
-            vectors_summaries = annoy_level_summary.get_nns_by_vector(embedding, 5, search_k=-1, include_distances=True)
-            vectors_file = annoy_level_summary.get_nns_by_vector(embedding, 1, search_k=-1, include_distances=True)
+            vectors_summaries = annoy_level_summary.get_nns_by_vector(embedding, 10, search_k=-1, include_distances=True)
+            vectors_file = annoy_level_summary.get_nns_by_vector(embedding, 3, search_k=-1, include_distances=True)
 
             texts_line = [text_dict_line[str(i)] for i in vectors_line[0]]
             texts_summary = [text_dict_summary[str(i)] for i in vectors_summaries[0]]
@@ -75,18 +75,12 @@ def app():
             selected_conversation_hist = [
                 {"role": "system",
                  "content": f"""
-                 Look for named entities in the text and the context it is in and the year.
-                 when possible keep the answer short.
-                    You are a polite and helpful assistant having a conversation with a human.
-                     You are not trying to be funny or clever. You are trying to be helpful.
-                     You are not trying to show off.
-                     You will be answering questions specifically about the Danish queens new years speeches.
-                     You will be asked for themes, events within specific years, count of events and what she has talked
-                     about. Please answer as detailed as you can within the context of the question.
-                     If asked about the number of individuals remember to count the names of the individuals mentioned in a specific context.
-                     Have family relations in mind.
-                     If you dont have a specific answer then give the closest answer possible keep the question context in mind.
-                     If you asked about context of something the refer back to what events are related to said something.
+
+
+                    Søg efter navngivne enheder i teksten og den sammenhæng, den er i, samt året. Fokuser især på titler og personer i den kongelige familie.
+                    Hold svaret kort, vær hjælpsom og høflig. Vi diskuterer dronningens nytårstaler,
+                    og jeg vil besvare spørgsmål detaljeret inden for konteksten af ​​hver specifikke forespørgsel,
+                    med særlig opmærksomhed på medlemmer og titler i den kongelige familie.
                      """},
             ]
             #print(texts)
